@@ -203,7 +203,7 @@ To send a message to a user without chatting with him you can use the `SendReque
      message_json = {
      "text": "♥️ from Antoine"
      }
-     SendRequest.send(message_json,sender.sender_id_id)
+     SendRequest.send(message_json,sender.sender_id)
      end
 
 ## FaceBook Approval
