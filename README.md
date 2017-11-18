@@ -53,8 +53,7 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
     production:
     FB_PAGE_KEY: 'EAAB2lF1nr5ABAIZCIU.....etw8IqCqzh2kPDCJAu'
     FB_SECRET_PASS: '8337f0cd.....192c45c'
-    
-
+ 
  **LET'S CODE THE BACKEND** 
 
 - Create a `messenger_bot.rb` in the initializers
