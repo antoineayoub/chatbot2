@@ -74,24 +74,24 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
 ```ruby
     class MessengerBotController < ActionController::Base
     
-    	def message(event, sender)
+        def message(event, sender)
     		 # profile = sender.get_profile(field) # default field [:locale, :timezone, :gender, :first_name, :last_name, :profile_pic]
-     sender.reply({ text: "Reply: #{event['message']['text']}" })
-     end
+            sender.reply({ text: "Reply: #{event['message']['text']}" })
+        end
     
-     def delivery(event, sender)
-     end
+        def delivery(event, sender)
+        end
     	
     	def optin(event, sender)
-     end
+        end
     
-     def postback(event, sender)
-     payload = event["postback"]["payload"]
-     case payload
-     when :something
-     #ex: process sender.reply({text: "button click event!"})
-     end
-     end
+        def postback(event, sender)
+            payload = event["postback"]["payload"]
+            case payload
+            when :something
+            #ex: process sender.reply({text: "button click event!"})
+            end
+        end
     end
 ```
  [https://developers.facebook.com/docs/messenger-platform/webhook#subscribe](https://developers.facebook.com/docs/messenger-platform/webhook#subscribe) 
@@ -142,7 +142,7 @@ each time your backend receive a message you should find in your database if the
     	if User.find_by(facebook_id: sender_id)
     		User.find_by(facebook_id: sender_id)
     	else
-    		User.create(email: "#{sender_id}@fake_email.com",first_name: first_name, last_name: last_name,password: sender_id,facebook_id: sender_id)
+    		User.create(email: "#{sender_id}@fake_email.com",first_name: first_name, last_name: last_name,password: sender_id,facebook_id:              sender_id)
     	end
     end
 ```
@@ -190,9 +190,9 @@ We will create a table Sessions to save the context and the previous context
     create_table :sessions do |t|
     	t.jsonb :context
     	t.jsonb :previous_context
-     t.references :user
-     t.datetime :last_exchange
-     t.timestamps
+        t.references :user
+        t.datetime :last_exchange
+        t.timestamps
      end
 
     rails db:migrate
@@ -202,11 +202,11 @@ We will create a table Sessions to save the context and the previous context
 To send a message to a user without chatting with him you can use the `SendRequest` services. Ex:
 ```ruby
     def optin(event, sender)
-     message_json = {
-     "text": "♥️ from Antoine"
-     }
-     SendRequest.send(message_json,sender.sender_id)
-     end
+      message_json = {
+        "text": "♥️ from Antoine"
+        }
+      SendRequest.send(message_json,sender.sender_id)
+   end
 ```
 ## FaceBook Approval
 
