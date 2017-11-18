@@ -5,17 +5,17 @@ Create Rails project
     $ rails new project_name
     $ cd project_name
     $ stt
+    $ rails db:create db:migrate
 
 Add the gem 'messenger-bot' but the MatthiasRMS version
 
     gem 'messenger-bot', :git => 'git://github.com/MatthiasRMS/messenger-bot-rails'
     
     $ bundle install
-    $ rails db:create db:migrate
 
  **Facebook Configuration** 
 
-- Create a FaceBook page (with the pictures)
+- Create a FaceBook page
 
  [https://www.facebook.com/pages/create/](https://www.facebook.com/pages/create/) 
 
@@ -24,8 +24,11 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
  [https://developers.facebook.com/](https://developers.facebook.com/) 
 
 - Add a Messenger Product to your App
-- Messenger / Settings : Generate a Token by slecting your page on the dropdown
-- Report the credentials in the application.yml : Token and app secret key
+- Messenger / Settings : Generate a Token by selecting your page on the dropdown
+
+![](https://static.notion-static.com/4d0b0b7683d14853aa6f3aaae5a1037b/Screen_Shot_2017-11-18_at_02.35.11.png)
+
+- Report the credentials in the `application.yml` : Page Token and App Secret Key
 
     development:
     FB_PAGE_KEY: 'EAAB2lF1nr5ABAIZCIU.....etw8IqCqzh2kPDCJAu'
@@ -40,9 +43,9 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
     FB_SECRET_PASS: '8337f0cd.....192c45c'
     
 
- **BACKEND** 
+ **LET'S CODE THE BACKEND** 
 
-- Create a `messenger_bot.rb` in the initializer
+- Create a `messenger_bot.rb` in the initializers
 - Configure the initializer :
 
     Messenger::Bot.config do |config|
@@ -51,11 +54,11 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
     	config.secret_token = ENV['FB_SECRET_PASS']
     end
 
-- Configure the routes :
+- Add those routes :
 
     mount Messenger::Bot::Space => "/webhook"
 
-- Create the controller :
+- Create a new controller `MessengerBotController` :
 
     class MessengerBotController < ActionController::Base
     
@@ -65,6 +68,9 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
      end
     
      def delivery(event, sender)
+     end
+    	
+    	def optin(event, sender)
      end
     
      def postback(event, sender)
@@ -94,31 +100,17 @@ We need a server running not locally but accessible on the web
 
 https://ngrok.com/
 
-## Asynchronous system : How to manage that ?
+Save the `ngrok` file in the same folder as your app and launch it with the commande : `../ngrok http 3000` 
 
-By saving the state in the database
+then run your server : `rails s` 
 
-We will create a table Sessions to save the context and the previous context
-
-    rails g migration CreateSessions
-
-5 fields :
-
-    create_table :sessions do |t|
-    	t.jsonb :context
-    	t.jsonb :previous_context
-     t.references :user
-     t.datetime :last_exchange
-     t.timestamps
-     end
-
-    rails db:migrate
+ _NB: if you make changes on your code never stop the ngrok tunnel but relaunch your server_ 
 
  **What we received from messenger ?** 
 
-Event : event
+Event : json informations about the event 
 
-Sender : `sender.get_profile` 
+Sender : informations about the sender (use `sender.get_profile` to have the details)
 
     sender_id = event["sender"]["id"].to_i
     first_name = sender.get_profile[:body]["first_name"]
@@ -128,7 +120,11 @@ Sender : `sender.get_profile`
     profile_pic = sender.get_profile[:body]["profile_pic"]
     msg = event["message"]["text"]
 
+## **Some usefull function to add in the controller**
+
  **Find or Create a user** 
+
+each time your backend receive a message you should find in your database if the user exist to assign the conversation or create the user
 
     def find_or_create_user(first_name, last_name, sender_id)
     	if User.find_by(facebook_id: sender_id)
@@ -139,6 +135,8 @@ Sender : `sender.get_profile`
     end
 
  **Find or Create a session** 
+
+each time your backend receive a message you want to create or update the user session (cf session concept bellow)
 
     def find_or_create_session(user_id)#, max_age: 59.minutes)
     	if Session.find_by("user_id = ?", user_id )# AND last_exchange >= ? ", max_age.ago)
@@ -165,3 +163,23 @@ The gem manage several templates :
 6. quick_reply.rb
 7. receipt.rb
 8. text.rb
+
+## Asynchronous system : How to manage that ? creating a Session !
+
+By saving the state in the database
+
+We will create a table Sessions to save the context and the previous context
+
+    rails g migration CreateSessions
+
+5 fields :
+
+    create_table :sessions do |t|
+    	t.jsonb :context
+    	t.jsonb :previous_context
+     t.references :user
+     t.datetime :last_exchange
+     t.timestamps
+     end
+
+    rails db:migrate
