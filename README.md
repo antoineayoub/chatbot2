@@ -28,7 +28,7 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
 
 ![](https://static.notion-static.com/4d0b0b7683d14853aa6f3aaae5a1037b/Screen_Shot_2017-11-18_at_02.35.11.png)
 
-- Suscribe your page to your webhook (https nogrok url), ex: [https://172dfb36.ngrok.io/webhook](https://172dfb36.ngrok.io/webhook) with the token you just created
+- Suscribe your page to your webhook (https ngrok url), ex: [https://172dfb36.ngrok.io/webhook](https://172dfb36.ngrok.io/webhook) with the token you just created
 
 ![](https://static.notion-static.com/7f8eb0ef047242ee9a5e352e56f7609d/Screen_Shot_2017-11-18_at_02.57.37.png)
 
