@@ -98,8 +98,6 @@ https://ngrok.com/
 
 By saving the state in the database
 
-![](https://static.notion-static.com/d68ac11f1df149b8bf944039a598d17f/Untitled)
-
 We will create a table Sessions to save the context and the previous context
 
     rails g migration CreateSessions
