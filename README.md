@@ -41,7 +41,7 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
 ![](https://static.notion-static.com/d542941d87ce4b45b799382ff3c59fe8/Screen_Shot_2017-11-18_at_02.53.16.png)
 
 - Report the credentials in the `application.yml` : Page Token and App Secret Key
-
+   ```ruby
     development:
     FB_PAGE_KEY: 'EAAB2lF1nr5ABAIZCIU.....etw8IqCqzh2kPDCJAu'
     FB_SECRET_PASS: '8337f0cd.....192c45c'
@@ -53,7 +53,7 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
     production:
     FB_PAGE_KEY: 'EAAB2lF1nr5ABAIZCIU.....etw8IqCqzh2kPDCJAu'
     FB_SECRET_PASS: '8337f0cd.....192c45c'
- 
+ ```
  **LET'S CODE THE BACKEND** 
 
 - Create a `messenger_bot.rb` in the initializers
