@@ -28,6 +28,18 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
 
 ![](https://static.notion-static.com/4d0b0b7683d14853aa6f3aaae5a1037b/Screen_Shot_2017-11-18_at_02.35.11.png)
 
+- Suscribe your page to your webhook (https nogrok url), ex: [https://172dfb36.ngrok.io/webhook](https://172dfb36.ngrok.io/webhook) with the token you just created
+
+![](https://static.notion-static.com/7f8eb0ef047242ee9a5e352e56f7609d/Screen_Shot_2017-11-18_at_02.57.37.png)
+
+- Subscribe to the following events :
+
+![](https://static.notion-static.com/b277f9d90d244f42befc347c4a056f06/Screen_Shot_2017-11-18_at_02.52.07.png)
+
+- Select a page to subscribe your webhook to the page events
+
+![](https://static.notion-static.com/d542941d87ce4b45b799382ff3c59fe8/Screen_Shot_2017-11-18_at_02.53.16.png)
+
 - Report the credentials in the `application.yml` : Page Token and App Secret Key
 
     development:
@@ -183,3 +195,20 @@ We will create a table Sessions to save the context and the previous context
      end
 
     rails db:migrate
+
+## Send info to user
+
+To send a message to a user without chatting with him you can use the `SendRequest` services. Ex:
+
+    def optin(event, sender)
+     message_json = {
+     "text": "♥️ from Antoine"
+     }
+     SendRequest.send(message_json,sender.sender_id_id)
+     end
+
+## FaceBook Approval
+
+FB should approve your bot. Your need to follow the process down in the messenger product page. You need the 2 first approval.
+
+![](https://static.notion-static.com/326176abcb534760b30d2dfce29c3c75/Screen_Shot_2017-11-18_at_03.02.36.png)
