@@ -1,18 +1,18 @@
 ## **Launch the project**
 
 Create Rails project
-
+```shell
     $ rails new project_name
     $ cd project_name
     $ stt
     $ rails db:create db:migrate
-
+```
 Add the gem 'messenger-bot' but the MatthiasRMS version
-
+```ruby
     gem 'messenger-bot', :git => 'git://github.com/MatthiasRMS/messenger-bot-rails'
     
     $ bundle install
-
+```
  **Facebook Configuration** 
 
 - Create a FaceBook page
@@ -41,7 +41,7 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
 ![](https://static.notion-static.com/d542941d87ce4b45b799382ff3c59fe8/Screen_Shot_2017-11-18_at_02.53.16.png)
 
 - Report the credentials in the `application.yml` : Page Token and App Secret Key
-   ```ruby
+```ruby
     development:
     FB_PAGE_KEY: 'EAAB2lF1nr5ABAIZCIU.....etw8IqCqzh2kPDCJAu'
     FB_SECRET_PASS: '8337f0cd.....192c45c'
@@ -53,24 +53,25 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
     production:
     FB_PAGE_KEY: 'EAAB2lF1nr5ABAIZCIU.....etw8IqCqzh2kPDCJAu'
     FB_SECRET_PASS: '8337f0cd.....192c45c'
- ```
- **LET'S CODE THE BACKEND** 
+```
+ 
+**LET'S CODE THE BACKEND** 
 
 - Create a `messenger_bot.rb` in the initializers
 - Configure the initializer :
-
+```ruby
     Messenger::Bot.config do |config|
     	config.access_token = ENV['FB_PAGE_KEY']
     	config.validation_token = ENV['FB_PAGE_KEY']
     	config.secret_token = ENV['FB_SECRET_PASS']
     end
-
+ ```
 - Add those routes :
-
+```ruby
     mount Messenger::Bot::Space => "/webhook"
-
+```
 - Create a new controller `MessengerBotController` :
-
+```ruby
     class MessengerBotController < ActionController::Base
     
     	def message(event, sender)
@@ -92,17 +93,17 @@ Add the gem 'messenger-bot' but the MatthiasRMS version
      end
      end
     end
-
+```
  [https://developers.facebook.com/docs/messenger-platform/webhook#subscribe](https://developers.facebook.com/docs/messenger-platform/webhook#subscribe) 
 
 - NB : if you are using devise you need to skip the authentication for this controller :
-
+```ruby
     class MessengerBotController < ActionController::Base
     	skip_before_action :authenticate_user!
     	skip_before_action :verify_authenticity_token
     	....
     end
-
+```
 ## **How to test the chatbot ?**
 
 We need a server running not locally but accessible on the web
@@ -122,7 +123,7 @@ then run your server : `rails s`
 Event : json informations about the event 
 
 Sender : informations about the sender (use `sender.get_profile` to have the details)
-
+```ruby
     sender_id = event["sender"]["id"].to_i
     first_name = sender.get_profile[:body]["first_name"]
     last_name = sender.get_profile[:body]["last_name"]
@@ -130,13 +131,13 @@ Sender : informations about the sender (use `sender.get_profile` to have the det
     
     profile_pic = sender.get_profile[:body]["profile_pic"]
     msg = event["message"]["text"]
-
+```
 ## **Some usefull function to add in the controller**
 
  **Find or Create a user** 
 
 each time your backend receive a message you should find in your database if the user exist to assign the conversation or create the user
-
+```ruby
     def find_or_create_user(first_name, last_name, sender_id)
     	if User.find_by(facebook_id: sender_id)
     		User.find_by(facebook_id: sender_id)
@@ -144,11 +145,11 @@ each time your backend receive a message you should find in your database if the
     		User.create(email: "#{sender_id}@fake_email.com",first_name: first_name, last_name: last_name,password: sender_id,facebook_id: sender_id)
     	end
     end
-
+```
  **Find or Create a session** 
 
 each time your backend receive a message you want to create or update the user session (cf session concept bellow)
-
+```ruby
     def find_or_create_session(user_id)#, max_age: 59.minutes)
     	if Session.find_by("user_id = ?", user_id )# AND last_exchange >= ? ", max_age.ago)
     	 session = Session.find_by("user_id = ?", user_id )# AND last_exchange >= ? ", user_id, max_age.ago)
@@ -159,7 +160,7 @@ each time your backend receive a message you want to create or update the user s
     	 return session
     	end
     end
-
+```
 ## Let's template things
 
  [https://developers.facebook.com/docs/messenger-platform/send-messages/templates](https://developers.facebook.com/docs/messenger-platform/send-messages/templates) 
@@ -180,11 +181,12 @@ The gem manage several templates :
 By saving the state in the database
 
 We will create a table Sessions to save the context and the previous context
-
+```ruby
     rails g migration CreateSessions
+```
 
 5 fields :
-
+```ruby
     create_table :sessions do |t|
     	t.jsonb :context
     	t.jsonb :previous_context
@@ -194,18 +196,18 @@ We will create a table Sessions to save the context and the previous context
      end
 
     rails db:migrate
-
+```
 ## Send info to user
 
 To send a message to a user without chatting with him you can use the `SendRequest` services. Ex:
-
+```ruby
     def optin(event, sender)
      message_json = {
      "text": "♥️ from Antoine"
      }
      SendRequest.send(message_json,sender.sender_id)
      end
-
+```
 ## FaceBook Approval
 
 FB should approve your bot. Your need to follow the process down in the messenger product page. You need the 2 first approval.
