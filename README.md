@@ -213,3 +213,64 @@ To send a message to a user without chatting with him you can use the `SendReque
 FB should approve your bot. Your need to follow the process down in the messenger product page. You need the 2 first approval.
 
 ![](https://static.notion-static.com/326176abcb534760b30d2dfce29c3c75/Screen_Shot_2017-11-18_at_03.02.36.png)
+
+## Send to Messenger Plugin
+
+The "Send to Messenger" plugin is used to trigger an authentication event to your webhook. You can pass in data to know which user and transaction was tied to the authentication event, and link the user on your back-end.
+
+ [https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin](https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin) 
+
+![](https://static.notion-static.com/1440523fec574c09ba2133d89d3d924b/Screen_Shot_2017-11-19_at_23.08.13.png)
+
+Add this script after the `body` of the `application.html.erb` 
+```javascript
+    <script>
+    	window.fbAsyncInit = function() {
+     FB.init({
+     appId: <%= ENV['FB_APP_ID'] %>,
+     xfbml: true,
+     version: "v2.6"
+     });
+    
+     FB.Event.subscribe('send_to_messenger', function(e) {
+     // callback for events triggered by the plugin
+     });
+    
+     };
+    
+     (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) { return; }
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+    </script>
+```
+Add this to your HTML Page where you want to display the button
+```html
+    <div class="fb-send-to-messenger"
+     messenger_app_id=<%= ENV['FB_APP_ID'] %>
+     page_id= <%= ENV['FB_PAGE_ID'] %>
+     data-ref= "Hello"
+     color="blue"
+     size="standard">
+    </div>
+```
+ **Event Subscription** 
+
+Subscribe to plugin events.
+```javascript
+    <script>
+    
+     FB.Event.subscribe('send_to_messenger', function(e) {
+     // callback for events triggered by the plugin
+     
+     });
+    
+    </script>
+```
+
+**Callback** 
+
+This triggers the  [opt-in callback](https://developers.facebook.com/docs/messenger-platform/webhook-reference/optins) .
