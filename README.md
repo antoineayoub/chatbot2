@@ -198,7 +198,22 @@ We will create a table Sessions to save the context and the previous context
     rails db:migrate
 ```
 ## Send info to user
+Create a SendRequest function on apps/services/send_request.rb
+```ruby
+    module SendRequest
+      def self.send(message, sender_id)
+        token = ENV['FB_PAGE_KEY']
+        url = ENV['FB_URL']
+        request_params =  {
+          recipient: {id: sender_id},
+          message: message,
+          access_token: token
+        }
 
+        RestClient.post url, request_params.to_json, :content_type => :json, :accept => :json
+      end
+    end
+```
 To send a message to a user without chatting with him you can use the `SendRequest` services. Ex:
 ```ruby
     def optin(event, sender)
