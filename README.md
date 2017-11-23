@@ -214,6 +214,10 @@ Create a SendRequest function on apps/services/send_request.rb
       end
     end
 ```
+Add the environment variable `FB_URL` in `application.yml`:
+```ruby
+    FB_URL: "https://graph.facebook.com/me/messages?access_token="
+```
 To send a message to a user without chatting with him you can use the `SendRequest` services. Ex:
 ```ruby
     def optin(event, sender)
